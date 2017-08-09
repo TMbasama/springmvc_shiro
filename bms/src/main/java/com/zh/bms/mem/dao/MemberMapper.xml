@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zh.bms.mem.dao.MemberMapper">
+
+    <!-- 根据id查询-->
+    <select id="queryById" parameterType="Long" resultType="Mem">
+    select id,
+		 name,
+		 gender,
+		 birthday,
+		 phone,
+		 cardNum,
+		 level,
+		 shop,
+		 totalAmount,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate FROM member where id=#{id} and status=1
+    </select>
+    <!-- 根据会员卡号查询 -->
+    <select id="queryByCardNum" parameterType="String" resultType="Mem">
+    select id,
+		 name,
+		 gender,
+		 birthday,
+		 phone,
+		 cardNum,
+		 level,
+		 totalAmount,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate FROM member  where cardNum=#{cardNum} and status=1
+    </select>
+	<!-- 总数查询 -->
+	<select id="adminQueryCount" resultType="Integer" parameterType="Map">
+		select
+		count(*) as count
+		from member as m
+		where status=1
+		<if test="pageWhere1 !=null and pageWhere1 !='' ">AND m.cardNum LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		 <if test="pageWhere2 !=null and pageWhere2 !='' ">AND m.phone LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		 <if test="pageWhere3 !=null and pageWhere3 !='' ">AND m.uniqueNum LIKE CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		 <if test="pageWhere4 !=null and pageWhere4 !='' ">AND m.operateMenu LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>
+	</select>
+   <!-- 分页查询数据 -->
+	<select id="adminQueryLst" parameterType="Map" resultType="Mem">
+	 select 
+	     m.id,
+		 m.name,
+		 m.gender,
+		 m.birthday,
+		 m.phone,
+		 m.cardNum,
+		 m.level,
+		 m.totalAmount,
+		 m.createName,
+		 m.createDate,
+		 m.updateName,
+		 m.updateDate,
+		 store.name as shopName
+		 FROM member as m
+		 left join store
+		 on m.shop=store.id
+		 WHERE m.status=1
+		 <if test="pageWhere1 !=null and pageWhere1 !='' ">AND m.cardNum LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		 <if test="pageWhere2 !=null and pageWhere2 !='' ">AND m.phone LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		 <if test="pageWhere3 !=null and pageWhere3 !='' ">AND m.uniqueNum LIKE CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		 <if test="pageWhere4 !=null and pageWhere4 !='' ">AND m.operateMenu LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>
+		 <if test="sortName !=null and sortName !='' ">ORDER BY ${sortName} ${sortOrder}</if>
+			limit #{offset},#{limit}
+	</select>
+	<select id="userQueryCount" resultType="Integer" parameterType="Map">
+	 select 
+	    count(m.id) as count
+		 FROM member as m
+		 left join store
+		 on m.shop=store.id
+		 WHERE m.shop=#{shop} and m.status=1
+		<if test="pageWhere1 !=null and pageWhere1 !='' ">AND m.cardNum LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		 <if test="pageWhere2 !=null and pageWhere2 !='' ">AND m.phone LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		 <if test="pageWhere3 !=null and pageWhere3 !='' ">AND m.uniqueNum LIKE CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		 <if test="pageWhere4 !=null and pageWhere4 !='' ">AND m.operateMenu LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>
+	</select>
+   <!-- 分页查询数据 -->
+	<select id="userQueryLst" parameterType="Map" resultType="Mem">
+	 select 
+	     m.id,
+		 m.name,
+		 m.gender,
+		 m.birthday,
+		 m.phone,
+		 m.cardNum,
+		 m.level,
+		 m.totalAmount,
+		 m.createName,
+		 m.createDate,
+		 m.updateName,
+		 m.updateDate,
+		 store.name as shopName
+		 FROM member as m
+		 left join store
+		 on m.shop=store.id
+		 WHERE m.shop=#{shop} and m.status=1
+		 <if test="pageWhere1 !=null and pageWhere1 !='' ">AND m.cardNum LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		 <if test="pageWhere2 !=null and pageWhere2 !='' ">AND m.phone LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		 <if test="pageWhere3 !=null and pageWhere3 !='' ">AND m.uniqueNum LIKE CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		 <if test="pageWhere4 !=null and pageWhere4 !='' ">AND m.operateMenu LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>
+		 <if test="sortName !=null and sortName !='' ">ORDER BY ${sortName} ${sortOrder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="insert" parameterType="Mem" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		member(
+		 name,
+		 gender,
+		 birthday,
+		 phone,
+		 cardNum,
+		 level,
+		 shop,
+		 totalAmount,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate
+		)
+		VALUES(#{name},#{gender},#{birthday},#{phone},#{cardNum},#{level},#{shop},
+		#{totalAmount},#{createName},#{createDate},#{updateName},#{updateDate})
+	</insert>
+	 <update id="update" parameterType="Mem">
+		UPDATE member
+		<trim prefix="set" suffixOverrides=",">
+			<if test="name != null">name = #{name},</if>
+			<if test="gender != null">gender = #{gender},</if>
+			<if test="birthday != null">birthday = #{birthday},</if>
+			<if test="cardNum != null">cardNum = #{cardNum},</if>
+			<if test="level != null">level = #{level},</if>
+			<if test="shop != null">shop = #{shop},</if>
+			<if test="updateName != null">updateName = #{updateName},</if>
+			<if test="updateDate != null">updateDate = #{updateDate}</if>
+		</trim>
+		WHERE id = #{id} AND status=1
+	</update>
+    <update id="delete" parameterType="Long">
+		UPDATE member SET
+	    status=0 WHERE id = #{id} AND status=1
+	</update>
+</mapper>

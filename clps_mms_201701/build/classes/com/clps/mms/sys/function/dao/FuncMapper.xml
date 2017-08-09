@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clps.mms.sys.function.dao.FuncMapper">
+     <select id="queryFuncById" parameterType="Long" resultType="Func">
+		SELECT f_id as id,
+		f_name as name,
+		f_createName as createName,
+		f_createDate as createDate,
+		f_updateName as updateName,
+		f_updateDate as updateDate
+		FROM tbl_function WHERE f_id=#{id} AND f_isEnable=1
+	</select>
+	 <select id="queryFuncByName" parameterType="String" resultType="Func">
+		SELECT f_id as id,
+		f_name as name,
+		f_createName as createName,
+		f_createDate as createDate,
+		f_updateName as updateName,
+		f_updateDate as updateDate
+		FROM tbl_function WHERE f_name=#{name} AND f_isEnable=1
+	</select>
+
+	<!-- 总数查询 -->
+	<select id="queryFuncCount" resultType="Long" parameterType="Map">
+		SELECT
+		count(*) as count
+		FROM tbl_function
+		WHERE f_isEnable=1
+	</select>
+
+	<select id="queryFuncLst" parameterType="Map" resultType="Func">
+		SELECT f_id as id,
+		f_name as name,
+		f_createName as createName,
+		f_createDate as createDate,
+		f_updateName as updateName,
+		f_updateDate as updateDate
+		FROM tbl_function WHERE f_isEnable=1
+		<if test="sortname !=null and sortname !='' ">ORDER BY ${sortname} ${sortorder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="insertFunc" parameterType="Func" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		tbl_function(
+		f_name,
+		f_createName,
+		f_createDate,
+		f_updateName,
+		f_updateDate,
+		f_isEnable)
+		VALUES(#{name},#{createName},#{createDate},#{updateName},#{updateDate},1)
+	</insert>
+	<update id="updateFunc" parameterType="Func">
+		UPDATE tbl_function
+		<trim prefix="set" suffixOverrides=",">
+			<if test="name != null and name!=''">f_name = #{name},</if>
+			<if test="updateName != null and updateName!=''">f_updateName = #{updateName},</if>
+			<if test="updateDate != null and updateDate!=''">f_updateDate = #{updateDate}</if>
+		</trim>
+		WHERE f_id = #{id} AND f_isEnable=1
+	</update>
+    <update id="deleteFunc" parameterType="Long">
+		UPDATE tbl_function SET
+		f_isEnable=0 WHERE f_id = #{id} AND f_isEnable=1
+	</update>
+</mapper>

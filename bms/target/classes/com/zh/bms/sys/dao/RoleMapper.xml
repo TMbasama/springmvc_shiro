@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zh.bms.sys.dao.RoleMapper">
+
+    <!-- 根据id查询用户 -->
+    <select id="queryById" parameterType="Long" resultType="Role">
+         SELECT
+         id,
+		 name,
+		 description,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate FROM sys_role where id=#{id} and status=1
+    </select>
+    <sql id="queryLst_condition">
+	<where>
+	 status=1
+		<if test="pageWhere1 !=null and pageWhere1 !='' ">AND name LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		<if test="pageWhere2 !=null and pageWhere2 !='' ">AND createName LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		<if test="pageWhere3 !=null and pageWhere3 !='' ">AND phone LIKE CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		<if test="pageWhere4 !=null and pageWhere4 !='' ">AND manager LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>
+	</where>
+	</sql>
+	<!-- 总数查询 -->
+	<select id="queryCount" resultType="Integer" parameterType="Map">
+		SELECT
+		count(*) as count
+		from sys_role
+		<include refid="queryLst_condition"/>
+	</select>
+   <!-- 分页查询数据 -->
+	<select id="queryLst" parameterType="Map" resultType="Role">
+		SELECT
+         id,
+		 name,
+		 description,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate FROM sys_role
+		 <include refid="queryLst_condition"/>
+		<if test="sortName !=null and sortName !='' ">ORDER BY ${sortName} ${sortOrder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="insert" parameterType="Role" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		sys_role(
+		name,
+		description,
+		createName,
+		createDate,
+		updateName,
+		updateDate
+		)
+		VALUES(#{name},#{description},#{createName},#{createDate},#{updateName},#{updateDate})
+	</insert>
+	 <update id="update" parameterType="Role">
+		UPDATE sys_role
+		<trim prefix="set" suffixOverrides=",">
+			<if test="name != null">name = #{name},</if>
+			<if test="description != null">description = #{description},</if>
+			<if test="updateName != null">updateName = #{updateName},</if>
+			<if test="updateDate != null">updateDate = #{updateDate},</if>
+		</trim>
+		WHERE id = #{id} AND status=1
+	</update>
+    <update id="delete" parameterType="Long">
+		UPDATE sys_role SET
+	    status=0 WHERE id = #{id} AND status=1
+	</update>
+</mapper>

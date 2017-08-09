@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zh.bms.store.dao.StoreMapper">
+
+    <!-- 根据id查询-->
+    <select id="queryById" parameterType="Long" resultType="Store">
+    select id,
+		 name,
+		 type,
+		 address,
+		 phone,
+		 manager,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate FROM store where id=#{id} and del='N'
+    </select>
+    <select id="queryAll" parameterType="Long" resultType="Store">
+    select * FROM store where del='N'
+    </select>
+    
+	<!-- 总数查询 -->
+	<select id="queryCount" resultType="Integer" parameterType="Map">
+		select
+		count(*) as count
+		from store
+		where del='N'
+		<if test="pageWhere1 !=null and pageWhere1 !='' ">AND name LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		<if test="pageWhere2 !=null and pageWhere2 !='' ">AND type LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		<if test="pageWhere3 !=null and pageWhere3 !='' ">AND phone LIKE CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		<if test="pageWhere4 !=null and pageWhere4 !='' ">AND manager LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>
+	</select>
+   <!-- 分页查询数据 -->
+	<select id="queryLst" parameterType="Map" resultType="Store">
+	select id,
+		 name,
+		 type,
+		 address,
+		 phone,
+		 manager,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate FROM store where del='N'
+		 <if test="pageWhere1 !=null and pageWhere1 !='' ">AND name LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		 <if test="pageWhere2 !=null and pageWhere2 !='' ">AND type LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		 <if test="pageWhere3 !=null and pageWhere3 !='' ">AND phone LIKE CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		 <if test="pageWhere4 !=null and pageWhere4 !='' ">AND manager LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>
+		 <if test="sortName !=null and sortName !='' ">ORDER BY ${sortName} ${sortOrder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="insert" parameterType="Store" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		store(
+		 name,
+		 type,
+		 address,
+		 phone,
+		 manager,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate
+		)
+		VALUES(#{name},#{type},#{address},#{phone},#{manager},
+		#{createName},#{createDate},#{updateName},#{updateDate})
+	</insert>
+	 <update id="update" parameterType="Store">
+		UPDATE store
+		<trim prefix="set" suffixOverrides=",">
+			<if test="name != null">name = #{name},</if>
+			<if test="type != null">type = #{type},</if>
+			<if test="address != null">address = #{address},</if>
+			<if test="phone != null">phone = #{phone},</if>
+			<if test="manager  != null">manager = #{manager},</if>
+			<if test="updateName != null">updateName = #{updateName},</if>
+			<if test="updateDate != null">updateDate = #{updateDate}</if>
+		</trim>
+		WHERE id = #{id} AND del='N'
+	</update>
+    <update id="delete" parameterType="Long">
+		UPDATE store SET
+	    del='Y' WHERE id = #{id} AND del='N'
+	</update>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clps.mms.sys.menu.dao.MenuMapper">
+
+	<select id="queryAllMenu" resultType="Menu">
+		SELECT
+		m_id,m_name,m_description,m_createDate,
+		m_createName,m_updateDate,m_updateName,m_image,m_state,
+		m_superid,m_parentid,m_url FROM
+		tbl_menu WHERE m_state=1
+	</select>
+
+	<select id="queryMenuById" parameterType="Long" resultType="Menu">
+		SELECT m_id,m_name,m_description,m_createDate,m_createName,
+		m_updateDate,m_updateName,m_image,m_state,m_superid,m_url,m_parentid FROM tbl_menu
+		WHERE m_id=#{m_id} AND m_state=1
+	</select>
+
+	<select id="queryMenuByName" parameterType="String" resultType="Menu">
+		SELECT m_id,m_name,m_description,m_createDate,m_createName,
+		m_updateDate,m_updateName,m_image,m_state,m_superid FROM tbl_menu
+		WHERE m_name=#{m_name} AND m_state=1
+	</select>
+
+	<insert id="saveMenu" parameterType="Menu" keyProperty="m_id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		tbl_menu(m_name,m_description,m_url,m_createDate,m_createName,m_updateDate,m_updateName,m_image,m_parentid)
+		VALUES(#{m_name},#{m_description},#{m_url},#{m_createDate},#{m_createName},#{m_updateDate},#{m_updateName},#{m_image},#{m_parentid})
+	</insert>
+
+	<!-- 总数查询 -->
+	<select id="queryMenuCount" resultType="Long" parameterType="Map">
+		select count(*) as count
+		from tbl_menu
+		where m_state=1 
+	</select>
+
+	<select id="queryMenuList" parameterType="Map" resultType="Menu">
+		SELECT m_id,m_name,m_description,m_image,m_parentid,m_url FROM tbl_menu WHERE m_state=1
+		<if test="sortName !=null and sortName !='' ">AND ORDER BY ${sortname} ${sortorder}</if>
+		<if test="pageIndex!=null and iDisplayLength!=null">
+			limit #{pageIndex},#{iDisplayLength}
+		</if>
+	</select>
+
+	<update id="updateMenuById" parameterType="Menu">
+		UPDATE tbl_menu
+		<trim prefix="set" suffixOverrides=",">
+			<if test="m_name != null">m_name = #{m_name},</if>
+			<if test="m_description != null">m_description = #{m_description},</if>
+			<if test="m_image != null">m_image = #{m_image},</if>
+			<if test="m_parentid != null">m_parentid = #{m_parentid},</if>
+			<if test="m_url != null">m_url = #{m_url}</if>
+		</trim>
+		WHERE m_id = #{m_id} AND m_state=1
+	</update>
+
+	<update id="deleteMenuById" parameterType="Long">
+		UPDATE tbl_menu SET
+		m_state=0 WHERE m_id = #{m_id} AND m_state=1
+	</update>
+
+</mapper>

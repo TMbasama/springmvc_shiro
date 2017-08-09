@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clps.mms.log.sys.dao.LogMapper">
+
+	
+	<select id="queryLogCount" resultType="Long" parameterType="Map">
+		select
+		count(*) as count
+		from tbl_log
+		WHERE 1=1
+		 <if test="pageWhere1 !=null and pageWhere1 !='' ">AND content LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		 <if test="pageWhere2 !=null and pageWhere2 !='' ">AND type LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		 <if test="pageWhere3 !=null and pageWhere3 !='' ">AND operateName LIKE CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		 <if test="pageWhere4 !=null and pageWhere4 !='' ">AND operateMenu LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>      
+		<if test="sortname !=null and sortname !='' ">ORDER BY ${sortname} ${sortorder}</if>
+	</select>
+
+	<select id="queryLogLst" parameterType="Map" resultType="LogModel">
+		SELECT id,
+		       type,
+		       content,
+		       operateMenu,
+		       operateName,
+		       resourceName,
+		       createName,
+		       createDate,
+		       remark FROM tbl_log
+		     WHERE 1=1
+		 <if test="pageWhere1 !=null and pageWhere1 !='' ">AND content LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		 <if test="pageWhere2 !=null and pageWhere2 !='' ">AND type LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		 <if test="pageWhere3 !=null and pageWhere3 !='' ">AND operateName LIKE CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		 <if test="pageWhere4 !=null and pageWhere4 !='' ">AND operateMenu LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>       
+		<if test="sortname !=null and sortname !='' ">ORDER BY ${sortname} ${sortorder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="insert" parameterType="LogModel" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		tbl_log(type,
+		content,
+		operateMenu,
+		operateName,
+		resourceName,
+		createName,
+		createDate,
+		remark
+		)
+		VALUES(#{type},#{content},#{operateMenu},#{operateName},#{resourceName},#{createName},#{createDate},#{remark})
+	</insert>
+</mapper>

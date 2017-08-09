@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="holdingFund">
+
+    
+	<select id="queryHoldingCount" resultType="Integer" parameterType="Map">
+		select
+		count(hfp.acct_id) as count
+		from 
+		user_info as ui 
+		left join rela_user_acct as rua on ui.id=rua.user_id
+		left join acct_info as ai on rua.acct_id=ai.acct_id
+		left join hold_fund_prod as hfp on ai.acct_id=hfp.acct_id
+		left join fund_prod as fp on hfp.prod_id=fp.id
+        where ui.id=#{id}
+	</select>
+   <!-- 分页查询数据 -->
+	<select id="queryHoldingLstByAcctId" parameterType="Map" resultType="HoldingFundProd">
+		select
+		hfp.acct_id,
+		fp.name, 
+		hfp.hold_price,
+		hfp.hold_amount,
+		hfp.buy_worth,
+		fp.curr_price as net_worth,
+		hfp.earn_price,
+		hfp.buy_time
+		from 
+		user_info as ui 
+		left join rela_user_acct as rua on ui.id=rua.user_id
+		left join acct_info as ai on rua.acct_id=ai.acct_id
+		left join hold_fund_prod as hfp on ai.acct_id=hfp.acct_id
+		left join fund_prod as fp on hfp.prod_id=fp.id
+        where ui.id=#{id}
+        <if test="sortName !=null and sortName !='' ">ORDER BY ${sortName} ${sortOrder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="buyProd" parameterType="HoldingFundProd" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		hold_fund_prod(
+		acct_id,
+		prod_id,
+		hold_price,
+		hold_amount,
+		buy_worth,
+		net_worth,
+		earn_price,
+		buy_time,
+		create_time,
+		create_name,
+		update_time,
+		update_name
+		)
+		VALUES(#{acct_id},#{prod_id},#{hold_price},#{hold_amount},#{buy_worth},#{net_worth},
+		#{earn_price},#{buy_time},#{create_time},#{create_name},#{update_time},#{update_name})
+	</insert>
+	
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+    <!DOCTYPE configuration  
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	
+	<settings>
+		<!-- changes from the defaults -->
+		<setting name="lazyLoadingEnabled" value="false" />
+		<!-- 打印查询语句 -->
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+	</settings>
+	<typeAliases>
+		<!--这里给实体类取别名，方便在mapper配置文件中使用 -->
+		<typeAlias alias="Menu" type="com.clps.mms.sys.menu.model.Menu" />
+		<typeAlias alias="UserInfo" type="com.clps.mms.sys.user.model.UserInfo" />
+		<typeAlias alias="Role" type="com.clps.mms.sys.role.model.Role" />
+		<typeAlias alias="Func" type="com.clps.mms.sys.function.model.Function" />
+		<typeAlias alias="MenuFunc" type="com.clps.mms.sys.menu_function.model.MenuFunction" />
+		<typeAlias alias="RoleMenuFunc" type="com.clps.mms.sys.role_menu_function.model.RoleMenuFunc" />
+		<typeAlias alias="UserRole" type="com.clps.mms.sys.user_role.model.UserRole" />
+		<typeAlias alias="LogModel" type="com.clps.mms.log.sys.model.LogModel" />
+	</typeAliases>
+	
+	
+	
+</configuration>

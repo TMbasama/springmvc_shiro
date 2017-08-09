@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+    <!DOCTYPE configuration  
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	
+	<settings>
+		<!-- changes from the defaults -->
+		<setting name="lazyLoadingEnabled" value="false" />
+		<!-- 打印查询语句 -->
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+	</settings>
+	<typeAliases>
+		<!--这里给实体类取别名，方便在mapper配置文件中使用 -->
+		<typeAlias alias="Menu" type="com.tm.ebank.sys.entity.Menu" />
+		<typeAlias alias="User" type="com.tm.ebank.sys.entity.User" />
+		<typeAlias alias="Role" type="com.tm.ebank.sys.entity.Role" />
+		<typeAlias alias="UserRole" type="com.tm.ebank.sys.entity.UserRole" />
+		<typeAlias alias="RoleMenu" type="com.tm.ebank.sys.entity.RoleMenu" />
+		<typeAlias alias="Map" type="java.util.Map" />
+	</typeAliases>
+	
+	
+</configuration>

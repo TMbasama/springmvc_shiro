@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+    <!DOCTYPE configuration  
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	
+	<settings>
+		<!-- changes from the defaults -->
+		<setting name="lazyLoadingEnabled" value="false" />
+		<!-- 打印查询语句 -->
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+	</settings>
+	<typeAliases>
+		<!--这里给实体类取别名，方便在mapper配置文件中使用 -->
+		<typeAlias alias="User" type="com.tm.ebank.user.entity.User" />
+		<typeAlias alias="UserAcct" type="com.tm.ebank.user.entity.UserAcct" />
+		<typeAlias alias="AccountInfo" type="com.tm.ebank.account.entity.AccountInfo" />
+		<typeAlias alias="TransferInfo" type="com.tm.ebank.transfer.entity.TransferInfo" />
+		<typeAlias alias="ExpeRecord" type="com.tm.ebank.account.entity.ExpeRecord" />
+		<typeAlias alias="FundProd" type="com.tm.ebank.invest.entity.FundProd" />
+		<typeAlias alias="FinanceProd" type="com.tm.ebank.invest.entity.FinanceProd" />
+		<typeAlias alias="HoldingProd" type="com.tm.ebank.invest.entity.HoldingProd" />
+		<typeAlias alias="HoldingFundProd" type="com.tm.ebank.invest.entity.HoldingFundProd" />
+		<typeAlias alias="CreditCardApplyInfo" type="com.tm.ebank.creditcard.entity.ApplyInfo" />
+		<typeAlias alias="Map" type="java.util.Map" />
+	</typeAliases>
+	
+	
+</configuration>

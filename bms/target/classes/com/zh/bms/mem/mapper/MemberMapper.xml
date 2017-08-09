@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zh.bms.mem.dao.MemberMapper">
+
+    <!-- 根据id查询-->
+    <select id="queryById" parameterType="Long" resultType="Mem">
+    select id,
+		 name,
+		 gender,
+		 birthday,
+		 phone,
+		 cardNum,
+		 level,
+		 totalAmount,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate FROM sys_member where id=#{id} and status=1
+    </select>
+    <!-- 根据会员卡号查询 -->
+    <select id="queryByCardNum" parameterType="String" resultType="Mem">
+    select id,
+		 name,
+		 gender,
+		 birthday,
+		 phone,
+		 cardNum,
+		 level,
+		 totalAmount,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate FROM sys_member where cardNum=#{cardNum} and status=1
+    </select>
+	<!-- 总数查询 -->
+	<select id="queryCount" resultType="Integer" parameterType="Map">
+		select
+		count(*) as count
+		from sys_member
+		where status=1
+	</select>
+   <!-- 分页查询数据 -->
+	<select id="queryLst" parameterType="Map" resultType="Mem">
+	 select 
+	     id,
+		 name,
+		 gender,
+		 birthday,
+		 phone,
+		 cardNum,
+		 level,
+		 totalAmount,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate FROM sys_member WHERE status=1
+		<if test="sortname !=null and sortname !='' ">ORDER BY ${sortname} ${sortorder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="insert" parameterType="Mem" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		sys_member(
+		 name,
+		 gender,
+		 birthday,
+		 phone,
+		 cardNum,
+		 level,
+		 totalAmount,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate
+		)
+		VALUES(#{name},#{gender},#{birthday},#{shop},#{phone},#{cardNum},#{level},#{totalAmount},
+		#{createName},#{createDate},#{updateName},#{updateDate})
+	</insert>
+	<!-- <update id="updateUserById" parameterType="UserInfo">
+		UPDATE tbl_user
+		<trim prefix="set" suffixOverrides=",">
+			<if test="nickname != null">u_nickname = #{nickname},</if>
+			<if test="gender != null">u_gender = #{gender},</if>
+			<if test="mobNum != null">u_mobnum = #{mobNum},</if>
+			<if test="email != null">u_email = #{email},</if>
+			<if test="department != null">u_department = #{department},</if>
+			<if test="position != null">u_position = #{position},</if>
+			<if test="updatename != null">u_updatename = #{updatename},</if>
+			<if test="updatedate != null">u_updatedate = #{updatedate}</if>
+		</trim>
+		WHERE u_id = #{id} AND u_isEnable=1
+	</update> -->
+    <update id="delete" parameterType="Long">
+		UPDATE sys_member SET
+	    status=0 WHERE id = #{id} AND status=1
+	</update>
+</mapper>

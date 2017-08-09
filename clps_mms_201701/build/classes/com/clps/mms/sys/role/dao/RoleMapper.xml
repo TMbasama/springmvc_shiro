@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clps.mms.sys.role.dao.RoleMapper">
+     
+      <select id="queryAll" parameterType="String" resultType="Role">
+		SELECT r_id as id,
+		r_name as name,
+		r_deptId as deptId,
+		r_createName as createName,
+		r_createDate as createDate,
+		r_updateName as updateName,
+		r_updateDate as updateDate,
+		r_description as description
+		FROM tbl_role WHERE r_isEnable=1
+	</select>
+	 <select id="queryRoleByName" parameterType="String" resultType="Role">
+		SELECT r_id as id,
+		r_name as name,
+		r_deptId as deptId,
+		r_createName as createName,
+		r_createDate as createDate,
+		r_updateName as updateName,
+		r_updateDate as updateDate,
+		r_description as description
+		FROM tbl_role WHERE r_name=#{name} AND r_isEnable=1
+		</select>
+	<select id="queryRoleById" parameterType="Long" resultType="Role">
+		SELECT r_id as id,
+		r_name as name,
+		r_deptId as deptId,
+		r_createName as createName,
+		r_createDate as createDate,
+		r_updateName as updateName,
+		r_updateDate as updateDate,
+		r_description as description
+		FROM tbl_role WHERE r_id=#{id} AND r_isEnable=1
+	</select>
+
+
+	<!-- 总数查询 -->
+	<select id="queryRoleCount" resultType="Long" parameterType="Map">
+		SELECT
+		count(*) as count
+		FROM tbl_role
+		WHERE r_isEnable=1
+	</select>
+
+	<select id="queryRoleLst" parameterType="Map" resultType="Role">
+		SELECT r_id as id,
+		r_name as name,
+		r_deptId as deptId,
+		r_createName as createName,
+		r_createDate as createDate,
+		r_updateName as updateName,
+		r_updateDate as updateDate,
+		r_description as description
+		FROM tbl_role WHERE r_isEnable=1
+		<if test="sortname !=null and sortname !='' ">ORDER BY ${sortname} ${sortorder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="insertRole" parameterType="Role" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		tbl_role(
+		r_name,
+		r_deptId,
+		r_createName,
+		r_createDate,
+		r_updateName,
+		r_updateDate,
+		r_description,
+		r_isEnable)
+		VALUES(#{name},#{deptId},#{createName},#{createDate},#{updateName},#{updateDate},#{description},1)
+	</insert>
+	<update id="updateRoleById" parameterType="Role">
+		UPDATE tbl_role
+		<trim prefix="set" suffixOverrides=",">
+			<if test="name != null and name!=''">r_name = #{name},</if>
+			<if test="deptId != null and deptId!=''">r_deptId = #{deptId},</if>
+			<if test="updateName != null and updateName!=''">r_updateName = #{updateName},</if>
+			<if test="updateDate != null and updateDate!=''">r_updateDate = #{updateDate},</if>
+			<if test="description != null and description!=''">r_description = #{description}</if>
+		</trim>
+		WHERE r_id = #{id} AND r_isEnable=1
+	</update>
+    <update id="deleteRoleById" parameterType="Long">
+		UPDATE tbl_role SET
+		r_isEnable=0 WHERE r_id = #{id} AND r_isEnable=1
+	</update>
+</mapper>

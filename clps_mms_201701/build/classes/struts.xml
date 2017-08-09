@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+	"http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<!-- START SNIPPET: xworkSample -->
+<struts>
+	<!-- Some or all of these can be flipped to true for debugging -->
+	<constant name="struts.i18n.reload" value="false" />
+	<constant name="struts.devMode" value="true" />
+	<!-- 动态调用方法 -->
+	<constant name="struts.enable.DynamicMethodInvocation" value="true"></constant>
+	<constant name="struts.objectFactory" value="spring"></constant>
+	<package name="default" extends="struts-default,json-default"
+		namespace="/">
+		<interceptors>
+			<interceptor name="authInter"
+				class="com.clps.mms.sys.action.interceptor.AuthorityInterceptor" />
+			<interceptor name="userInter"
+				class="com.clps.mms.sys.action.interceptor.UserInterceptor"></interceptor>
+		</interceptors>
+		<global-results>
+			<result name="login">/WEB-INF/jsp/login.jsp</result>
+		</global-results>
+		<!-- struts2.5 为了增加安全性，通配符 -->
+		<global-allowed-methods>regex:.*</global-allowed-methods>
+		<action name="login" class="com.clps.mms.sys.action.UserLoginAction">
+			<result name="success">index.jsp</result>
+			<result name="input">/WEB-INF/jsp/login.jsp</result>
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="authInter"></interceptor-ref>
+		</action>
+		<action name="userInfo_*" class="com.clps.mms.sys.action.UserAction"
+			method="{1}">
+			<result name="json" type="json">
+				<param name="root">resultMap</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">resultMap</param>
+			</result>
+		</action>
+		<action name="role_*" class="com.clps.mms.sys.action.RoleAction"
+			method="{1}">
+			<result name="json" type="json">
+				<param name="root">resultMap</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">resultMap</param>
+			</result>
+		</action>
+		<action name="func_*" class="com.clps.mms.sys.action.FuncAction"
+			method="{1}">
+			<result name="json" type="json">
+				<param name="root">resultMap</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">resultMap</param>
+			</result>
+		</action>
+		<action name="menuFunc_*" class="com.clps.mms.sys.action.MenuFuncAction"
+			method="{1}">
+			<result name="success">
+			</result>
+			<result name="json" type="json">
+				<param name="root">resultMap</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">resultMap</param>
+			</result>
+		</action>
+		<action name="roleMenuFunc_*" class="com.clps.mms.sys.action.RoleMenuFuncAction"
+			method="{1}">
+			<result name="json" type="json">
+				<param name="root">resultMap</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">resultMap</param>
+			</result>
+		</action>
+		<action name="userRole_*" class="com.clps.mms.sys.action.UserRoleAction"
+			method="{1}">
+			<result name="json" type="json">
+				<param name="root">resultMap</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">resultMap</param>
+			</result>
+		</action>
+		<action name="log_*" class="com.clps.mms.log.action.LogAction"
+			method="{1}">
+			<result name="json" type="json">
+				<param name="root">resultMap</param>
+			</result>
+		</action>
+
+		<action name="menu_*" class="com.clps.mms.sys.action.MenuAction"
+			method="{1}">
+			<result name="json" type="json">
+				<param name="root">resultMap</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">resultMap</param>
+			</result>
+		</action>
+		<action name="tree_*" class="com.clps.mms.sys.action.TreeAction"
+			method="{1}">
+		</action>
+		<action name="email_*" class="com.clps.mms.sys.action.EmailAction"
+			method="{1}">
+			<result name="success">/jsp/email.jsp</result>
+		</action>
+
+		<!-- 找回密码发送url -->
+		<action name="email_url" class="com.clps.mms.sys.action.EmailAction"
+			method="sendUrl">
+			<result>/jsp/forgetPwd2.jsp</result>
+		</action>
+
+		<!-- 验证码生成类配置 -->
+		<action name="verifyCode" class="com.clps.mms.sys.action.VerifyCodeAction">
+			<result name="success" type="stream">
+				<param name="inputName">imageStream</param>
+			</result>
+		</action>
+
+		<!-- 找回密码第二步配置 -->
+		<action name="findpwd_*" class="com.clps.mms.sys.action.FindPwdAction"
+			method="{1}">
+			<result name="success">/jsp/forgetPwd2.jsp</result>
+		</action>
+
+		<!-- 找回密码第三步配置 -->
+		<action name="find_uppwd" class="com.clps.mms.sys.action.FindUpPwdAction"
+			method="updateUserPwd">
+			<result name="success">/jsp/forgetPwd4.jsp</result>
+			<result name="error">/jsp/forgetPwd5.jsp</result>
+		</action>
+	</package>
+
+</struts>
+
+<!-- END SNIPPET: xworkSample -->
+

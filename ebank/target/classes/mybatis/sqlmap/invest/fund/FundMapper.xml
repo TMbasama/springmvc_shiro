@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fund">
+
+    <!-- 根据id查询 -->
+   <select id="queryById" parameterType="Long" resultType="FundProd">
+       SELECT * FROM fund_prod WHERE id=#{id} and status=1
+    </select>
+    <select id="queryByName" parameterType="String" resultType="FundProd">
+       SELECT * FROM fund_prod WHERE name=#{name} and status=1
+    </select>
+    
+    <sql id="queryLst_condition">
+	<where>
+	 status=1
+		<if test="pageWhere1 !=null and pageWhere1 !='' ">AND username LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		<if test="pageWhere2 !=null and pageWhere2 !='' ">AND shop LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		<if test="pageWhere3 !=null and pageWhere3 !='' ">AND phone LIKE CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		<if test="pageWhere4 !=null and pageWhere4 !='' ">AND createDate LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>
+	</where>
+	</sql>
+	<!-- 总数查询 -->
+	<select id="queryCount" resultType="Integer" parameterType="Map">
+		select
+		count(*) as count
+		from fund_prod
+		<include refid="queryLst_condition"/>
+	</select>
+   <!-- 分页查询数据 -->
+	<select id="queryLst" parameterType="Map" resultType="FundProd">
+		SELECT * FROM fund_prod
+		 <include refid="queryLst_condition"/>
+		<if test="sortName !=null and sortName !='' ">ORDER BY ${sortName} ${sortOrder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="insert" parameterType="FundProd" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		fund_prod(
+		name,
+		code,
+		type,
+		currency,
+		curr_price,
+		curr_date,
+		near_oneday,
+		near_onemouth,
+		near_threemouth,
+		near_sixmouth,
+		near_oneyear,
+		rate,
+		create_date,
+		create_name,
+		update_date,
+		update_name
+		)
+		VALUES(#{name},#{code},#{type},#{currency},#{curr_price},#{curr_date},#{near_oneday},
+		#{near_onemouth},#{near_threemouth},#{near_sixmouth},#{near_oneyear},#{rate},#{create_date},
+		#{create_name},#{update_date},#{update_name})
+	</insert>
+	
+	 <update id="update" parameterType="FundProd">
+		UPDATE fund_prod
+		<trim prefix="set" suffixOverrides=",">
+			<if test="gender != null">gender = #{gender},</if>
+			<if test="phone != null">phone = #{phone},</if>
+			<if test="email != null">email = #{email},</if>
+			<if test="age != null">age = #{age},</if>
+			<if test="birthday != null">birthday = #{birthday},</if>
+			<if test="updateName != null">updateName = #{updateName},</if>
+			<if test="updateDate != null">updateDate = #{updateDate}</if>
+		</trim>
+		WHERE id = #{id} AND status=1
+	</update>
+    <update id="delete" parameterType="Long">
+		UPDATE fund_prod SET
+	    status=0 WHERE id = #{id} AND status=1
+	</update>
+</mapper>

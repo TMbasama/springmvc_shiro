@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="expeRecord">
+
+    
+    <sql id="queryLst_condition">
+	<where>
+	 acct_id=#{acct_id} and status=1
+		<if test="pageWhere1 !=null and pageWhere1 !='' ">AND username LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		<if test="pageWhere2 !=null and pageWhere2 !='' ">AND shop LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		<if test="pageWhere3 !=null and pageWhere3 !='' ">AND phone LIKE CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		<if test="pageWhere4 !=null and pageWhere4 !='' ">AND createDate LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>
+	</where>
+	</sql>
+	<!-- 总数查询 -->
+	<select id="queryCountByAcctId" resultType="Integer" parameterType="Map">
+		select
+		count(*) as count
+		from expe_record
+		<include refid="queryLst_condition"/>
+	</select>
+   <!-- 分页查询数据 -->
+	<select id="queryLstByAcctId" parameterType="Map" resultType="ExpeRecord">
+		SELECT * FROM expe_record
+		 <include refid="queryLst_condition"/>
+		<if test="sortName !=null and sortName !='' ">ORDER BY ${sortName} ${sortOrder}</if>
+			limit #{offset},#{limit}
+	</select>
+	<!-- 总数查询 -->
+	<select id="queryCountByUserId" resultType="Integer" parameterType="Map">
+		SELECT count(id) as count FROM expe_record as er
+		left join rela_user_acct as rua
+		on er.acct_id=rua.acct_id
+		WHERE rua.user_id=#{user_id}
+	</select>
+   <!-- 分页查询数据 -->
+	<select id="queryLstByUserId" parameterType="Map" resultType="ExpeRecord">
+		SELECT * FROM expe_record as er
+		left join rela_user_acct as rua
+		on er.acct_id=rua.acct_id
+		WHERE rua.user_id=#{user_id}
+		<if test="sortName !=null and sortName !='' ">ORDER BY ${sortName} ${sortOrder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="insert" parameterType="ExpeRecord" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		expe_record(
+		acct_id,
+		create_short_time,
+		create_time,
+		pay_amount,
+		income_amount,
+		avail_balance,
+		other_acct_id,
+		other_name,
+		third_acct,
+		description
+		)
+		VALUES(#{acct_id},#{create_short_time},#{create_time},#{pay_amount},#{income_amount},
+		#{avail_balance},#{other_acct_id},#{other_name},#{third_acct},#{description})
+	</insert>
+	
+	 
+</mapper>

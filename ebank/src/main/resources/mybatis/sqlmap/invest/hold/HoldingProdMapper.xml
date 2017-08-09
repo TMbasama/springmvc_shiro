@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="holding">
+
+	<select id="queryHoldingCount" resultType="Integer" parameterType="Map">
+		select
+		count(hp.acct_id) count
+		from 
+		user_info as ui 
+		left join rela_user_acct as rua on ui.id=rua.user_id
+		left join acct_info as ai on rua.acct_id=ai.acct_id
+		left join hold_prod as hp on ai.acct_id=hp.acct_id
+		left join fm_prod as fp on hp.prod_id=fp.id
+		where ui.id=#{id}
+	</select>
+   <!-- 分页查询数据 -->
+	<select id="queryHoldingLstByAcctId" parameterType="Map" resultType="HoldingProd">
+		select
+		hp.acct_id,
+		fp.name, 
+		hp.hold_amount,
+		hp.avail_amount,
+		hp.net_worth,
+		hp.worth_time,
+		hp.end_time
+		from 
+		user_info as ui 
+		left join rela_user_acct as rua on ui.id=rua.user_id
+		left join acct_info as ai on rua.acct_id=ai.acct_id
+		left join hold_prod as hp on ai.acct_id=hp.acct_id
+		left join fm_prod as fp on hp.prod_id=fp.id
+		where ui.id=#{id}
+		<if test="sortName !=null and sortName !='' ">ORDER BY ${sortName} ${sortOrder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="buyProd" parameterType="HoldingProd" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		hold_prod(
+		acct_id,
+		prod_id,
+		hold_amount,
+		avail_amount,
+		net_worth,
+		worth_time,
+		end_time,
+		create_time,
+		create_name,
+		update_time,
+		update_name
+		)
+		VALUES(#{acct_id},#{prod_id},#{hold_amount},#{avail_amount},#{net_worth},#{worth_time},
+		#{end_time},#{create_time},#{create_name},#{update_time},#{update_name})
+	</insert>
+	
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clps.mms.sys.menu_function.dao.MenuFuncMapper">
+     <select id="queryAll"  resultType="java.util.HashMap">
+       SELECT mf.id,menu.m_name ,func.f_name FROM tbl_menu_function as mf 
+       left join tbl_menu menu on mf.menu_id=menu.m_id
+       left join tbl_function func on mf.func_id=func.f_id WHERE isEnable=1
+	</select>
+     <select id="queryMenuFuncByMenuId" parameterType="Long" resultType="MenuFunc">
+        SELECT
+		menu_id,
+		func_id,
+		createName,
+		createDate,
+		updateName,
+		updateDate
+		FROM tbl_menu_function WHERE menu_id=#{menu_id} And isEnable=1
+	</select>
+     <select id="queryFuncIdByMenuId" parameterType="Long" resultType="Long">
+        SELECT
+		func_id
+		FROM tbl_menu_function WHERE menu_id=#{menu_id} And isEnable=1
+	</select>
+    <insert id="insertMenuFunc" useGeneratedKeys="true" parameterType="java.util.List" >
+    <selectKey resultType="long" keyProperty="id" order="AFTER"> 
+     SELECT 
+     LAST_INSERT_ID() 
+    </selectKey>
+		INSERT INTO
+		tbl_menu_function(
+		menu_id,
+		func_id,
+		createName,
+		createDate,
+		updateName,
+		updateDate,
+		isEnable
+		)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+		(#{item.menu_id},#{item.func_id},#{item.createName},#{item.createDate},#{item.updateName},#{item.updateDate},#{item.isEnable})
+		</foreach>
+		ON DUPLICATE KEY UPDATE
+		menu_id=VALUES(menu_id),
+		func_id=VALUES(func_id),
+		updateName=VALUES(updateName),
+		updateDate=VALUES(updateDate),
+		isEnable=VALUES(isEnable)
+	</insert>
+</mapper>

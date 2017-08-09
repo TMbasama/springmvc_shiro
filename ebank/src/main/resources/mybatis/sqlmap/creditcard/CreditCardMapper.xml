@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="creditcard">
+
+    <!-- 根据id查询 -->
+   <select id="queryById" parameterType="Long" resultType="CreditCardApplyInfo">
+       SELECT * FROM cc_apply_info WHERE id=#{id}
+    </select>
+    <!-- 根据id查询 -->
+   <select id="queryByUserId" parameterType="Long" resultType="CreditCardApplyInfo">
+       SELECT * FROM cc_apply_info WHERE user_id=#{user_id}
+    </select>
+    <select id="queryByName" parameterType="String" resultType="CreditCardApplyInfo">
+       SELECT * FROM cc_apply_info WHERE name=#{name}
+    </select>
+    
+    <sql id="queryLst_condition">
+	<where>
+	 1=1
+		<if test="pageWhere1 !=null and pageWhere1 !='' ">AND creditcard_num LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		<if test="pageWhere2 !=null and pageWhere2 !='' ">AND apply_name LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		<if test="pageWhere3 !=null and pageWhere3 !='' ">AND city CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		<if test="pageWhere4 !=null and pageWhere4 !='' ">AND card_type LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>
+	</where>
+	</sql>
+	<!-- 总数查询 -->
+	<select id="queryCount" resultType="Integer" parameterType="Map">
+		select
+		count(*) as count
+		from cc_apply_info
+		<include refid="queryLst_condition"/>
+	</select>
+   <!-- 分页查询数据 -->
+	<select id="queryLst" parameterType="Map" resultType="CreditCardApplyInfo">
+		SELECT * FROM cc_apply_info
+		 <include refid="queryLst_condition"/>
+		<if test="sortName !=null and sortName !='' ">ORDER BY ${sortName} ${sortOrder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="insert" parameterType="CreditCardApplyInfo" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		cc_apply_info(
+		user_id,
+		creditcard_num,
+		apply_name,
+		apply_idcard,
+		city,
+		card_type,
+		education,
+		address,
+		phone,
+		email,
+		apply_time,
+		check_time,
+		check_status
+		)
+		VALUES(#{user_id},#{creditcard_num},#{apply_name},#{apply_idcard},#{city},#{card_type},
+		#{education},#{address},#{phone},#{email},#{apply_time},#{check_time},#{check_status})
+	</insert>
+    <insert id="applyCard" parameterType="CreditCardApplyInfo" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		cc_apply_info(
+		user_id,
+		apply_name,
+		apply_idcard,
+		city,
+		card_type,
+		education,
+		address,
+		phone,
+		email,
+		apply_time,
+		check_status
+		)
+		VALUES(#{user_id},#{apply_name},#{apply_idcard},#{city},#{card_type},#{education},
+		#{address},#{phone},#{email},#{apply_time},1)
+	</insert>
+	
+	 <update id="review" parameterType="CreditCardApplyInfo">
+		UPDATE cc_apply_info
+		<trim prefix="set" suffixOverrides=",">
+			<if test="creditcard_num != null creditcard_num!='' ">creditcard_num = #{creditcard_num},</if>
+			<if test="check_time != null check_time!='' ">check_time = #{check_time},</if>
+			<if test="check_status != null check_status!='' ">check_status = #{check_status}</if>
+		</trim>
+		WHERE id = #{id}
+	</update>
+    <update id="delete" parameterType="Long">
+		UPDATE cc_apply_info SET check_status=1
+	    WHERE id = #{id}
+	</update>
+    <update id="applyLoss" parameterType="Long">
+		UPDATE cc_apply_info SET check_status=0
+	    WHERE user_id = #{user_id}
+	</update>
+</mapper>

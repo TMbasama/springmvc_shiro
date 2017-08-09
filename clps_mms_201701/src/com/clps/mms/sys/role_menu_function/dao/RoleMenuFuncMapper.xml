@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clps.mms.sys.role_menu_function.dao.RoleMenuFuncMapper">
+<select id="queryMenuFuncIdByRoleId" parameterType="Long" resultType="Long">
+        SELECT
+		menuFunc_id
+		FROM tbl_role_menu_function WHERE role_id=#{role_id} And isEnable=1
+	</select>
+<select id="queryMenuFuncByRoleId" parameterType="Long" resultType="java.util.HashMap">
+        SELECT
+        m_id AS menuId,
+		m_name AS menuName,
+		f_name AS funcName
+		FROM tbl_role_menu_function AS rmf
+		left join tbl_menu_function AS mf ON rmf.menuFunc_id=mf.id
+		left join tbl_menu AS m ON mf.menu_id=m.m_id
+		left join tbl_function AS f ON mf.func_id=f.f_id 
+		WHERE role_id=#{role_id} And rmf.isEnable=1
+	</select>
+<select id="queryFuncByRoleId" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT
+		f_name AS funcName
+		FROM tbl_role_menu_function AS rmf
+		left join tbl_menu_function AS mf ON rmf.menuFunc_id=mf.id
+		left join tbl_menu AS m ON mf.menu_id=m.m_id
+		left join tbl_function AS f ON mf.func_id=f.f_id 
+		WHERE role_id=#{roleId} And m_id=#{menuId} And rmf.isEnable=1
+	</select>
+<select id="queryFuncIdByRoleId" parameterType="Long" resultType="Long">
+        SELECT
+		func_id
+		FROM tbl_role_menu_function AS rmf
+		left join tbl_menu_function mf ON rmf.menuFunc_id=mf.id
+		 WHERE role_id=#{role_id} And isEnable=1
+	</select>
+    <insert id="saveOrUpdate"  parameterType="java.util.List" >
+   <!--  <selectKey resultType="long" keyProperty="id" order="AFTER"> 
+     SELECT 
+     LAST_INSERT_ID() 
+    </selectKey> -->
+		INSERT INTO
+		tbl_role_menu_function(
+		role_id,
+		menuFunc_id,
+		isEnable
+		)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+		(#{item.role_id},#{item.menuFunc_id},#{item.isEnable})
+		</foreach>
+		ON DUPLICATE KEY UPDATE
+		role_id=VALUES(role_id),
+		menuFunc_id=VALUES(menuFunc_id),
+		isEnable=VALUES(isEnable)
+	</insert>
+</mapper>

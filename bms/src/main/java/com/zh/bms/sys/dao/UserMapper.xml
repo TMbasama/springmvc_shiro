@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zh.bms.sys.dao.UserMapper">
+
+    <!-- 根据id查询用户 -->
+    <select id="queryById" parameterType="Long" resultType="User">
+    select id,
+		 username,
+		 phone,
+		 birthday,
+		 IDCard,
+		 email,
+		 shop,
+		 createName,
+		 createDate,
+		 updateName,
+		 updateDate FROM sys_user where id=#{id} and status=1
+    </select>
+    <select id="queryByName" parameterType="String" resultType="User">
+       select 
+         *
+		 FROM sys_user where username=#{username} and status=1
+    </select>
+    
+    <sql id="queryLst_condition">
+	<where>
+	 sys_user.status=1
+		<if test="pageWhere1 !=null and pageWhere1 !='' ">AND username LIKE CONCAT(CONCAT('%',#{pageWhere1}),'%')</if>      
+		<if test="pageWhere2 !=null and pageWhere2 !='' ">AND shop LIKE CONCAT(CONCAT('%',#{pageWhere2}),'%')</if>      
+		<if test="pageWhere3 !=null and pageWhere3 !='' ">AND phone LIKE CONCAT(CONCAT('%',#{pageWhere3}),'%')</if>      
+		<if test="pageWhere4 !=null and pageWhere4 !='' ">AND createDate LIKE CONCAT(CONCAT('%',#{pageWhere4}),'%')</if>
+	</where>
+	</sql>
+	<!-- 总数查询 -->
+	<select id="queryUserCount" resultType="Integer" parameterType="Map">
+		select
+		count(*) as count
+		from sys_user
+		<include refid="queryLst_condition"/>
+	</select>
+   <!-- 分页查询数据 -->
+	<select id="queryUserLst" parameterType="Map" resultType="User">
+		SELECT 
+         sys_user.id,
+		 sys_user.username,
+		 sys_user.phone,
+		 sys_user.birthday,
+		 sys_user.IDCard,
+		 sys_user.email,
+		 sys_user.shop,
+		 sys_user.createName,
+		 sys_user.createDate,
+		 sys_user.updateName,
+		 sys_user.updateDate,
+         store.name as shopName,
+         sys_role.name as roleName
+         FROM sys_user
+         left join sys_user_role as sur 
+         on sys_user.id=sur.user_id
+         left join sys_role
+         on sur.role_id=sys_role.id 
+         left join store
+		 on sys_user.shop=store.id
+		 <include refid="queryLst_condition"/>
+		<if test="sortName !=null and sortName !='' ">ORDER BY ${sortName} ${sortOrder}</if>
+			limit #{offset},#{limit}
+	</select>
+    <insert id="insertUser" parameterType="User" keyProperty="id"
+		useGeneratedKeys="true">
+		INSERT INTO
+		sys_user(
+		username,
+		password,
+		phone,
+		birthday,
+		IDCard,
+		email,
+		shop,
+		createName,
+		createDate,
+		updateName,
+		updateDate,
+		status
+		)
+		VALUES(#{username},#{password},#{phone},#{birthday},#{IDCard},#{email},#{shop},#{createName},
+		#{createDate},#{updateName},#{updateDate},1)
+	</insert>
+	
+	 <update id="updateUser" parameterType="User">
+		UPDATE sys_user
+		<trim prefix="set" suffixOverrides=",">
+			<if test="username != null">username = #{username},</if>
+			<if test="phone != null">phone = #{phone},</if>
+			<if test="birthday != null">birthday = #{birthday},</if>
+			<if test="IDCard != null">IDCard = #{IDCard},</if>
+			<if test="email != null">email = #{email},</if>
+			<if test="shop != null">shop = #{shop},</if>
+			<if test="updateName != null">updateName = #{updateName},</if>
+			<if test="updateDate != null">updateDate = #{updateDate}</if>
+		</trim>
+		WHERE id = #{id} AND status=1
+	</update>
+    <update id="deleteUser" parameterType="Long">
+		UPDATE sys_user SET
+	    status=0 WHERE id = #{id} AND status=1
+	</update>
+</mapper>
